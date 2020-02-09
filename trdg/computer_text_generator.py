@@ -22,10 +22,12 @@ def _generate_horizontal_text(
     text, font, text_color, font_size, space_width, character_spacing, fit
 ):
     image_font = ImageFont.truetype(font=font, size=font_size)
-
-    space_width = int(image_font.getsize(" ")[0] * space_width)
-
+    space_width = int(image_font.getsize(" ")[0] * space_width)  #space_width 空格的宽度
+    # print(space_width,character_spacing)
     char_widths = [image_font.getsize(c)[0] if c != " " else space_width for c in text]
+    # print('text:',(text))
+    # print('len text:',len(text))
+    # print('char_widths:',char_widths)
     text_width = sum(char_widths) + character_spacing * (len(text) - 1)
     text_height = max([image_font.getsize(c)[1] for c in text])
 
@@ -39,11 +41,15 @@ def _generate_horizontal_text(
     colors = [ImageColor.getrgb(c) for c in text_color.split(",")]
     c1, c2 = colors[0], colors[-1]
 
+    # print('text_color,colors,c1,c2:',text_color,colors,c1,c2)
+
     fill = (
         rnd.randint(min(c1[0], c2[0]), max(c1[0], c2[0])),
         rnd.randint(min(c1[1], c2[1]), max(c1[1], c2[1])),
         rnd.randint(min(c1[2], c2[2]), max(c1[2], c2[2])),
     )
+
+    # print('fill:',fill)
 
     for i, c in enumerate(text):
         txt_img_draw.text(

@@ -110,7 +110,7 @@ def parse_arguments():
         type=int,
         nargs="?",
         help="Define the height of the produced images if horizontal, else the width",
-        default=32,
+        default=64,
     )
     parser.add_argument(
         "-t",
@@ -141,7 +141,7 @@ def parse_arguments():
         "--random_skew",
         action="store_true",
         help="When set, the skew angle will be randomized between the value set with -k and it's opposite",
-        default=False,
+        default=True,
     )
     parser.add_argument(
         "-wk",
@@ -239,7 +239,8 @@ def parse_arguments():
         type=str,
         nargs="?",
         help="Define the text's color, should be either a single hex color or a range in the ?,? format.",
-        default="#282828",
+        default="#000000,#181818",
+        #default="#282828",
     )
     parser.add_argument(
         "-sw",
@@ -263,7 +264,7 @@ def parse_arguments():
         type=margins,
         nargs="?",
         help="Define the margins around the text when rendered. In pixels",
-        default=(5, 5, 5, 5),
+        default=(10, 10, 10, 10),
     )
     parser.add_argument(
         "-fi",
@@ -296,6 +297,8 @@ def main():
     # Argument parsing
     args = parse_arguments()
 
+    print(args)
+
     # Create the directory if it does not exist.
     try:
         os.makedirs(args.output_dir)
@@ -305,6 +308,9 @@ def main():
 
     # Creating word list
     lang_dict = load_dict(args.language)
+
+    print(args.font_dir)
+    print(args.font)
 
     # Create font (path) list
     if args.font_dir:
@@ -349,7 +355,9 @@ def main():
         strings = create_strings_from_dict(
             args.length, args.random, args.count, lang_dict
         )
-
+    #for i in strings:
+    #    print(i)
+    #print(strings)
     if args.case == "upper":
         strings = [x.upper() for x in strings]
     if args.case == "lower":
@@ -400,7 +408,11 @@ def main():
         ) as f:
             for i in range(string_count):
                 file_name = str(i) + "." + args.extension
-                f.write("{} {}\n".format(file_name, strings[i]))
+                
+                # string1 = strings[i]
+                # print(string1)
+                # print(string1.replace(' ',''))
+                f.write("{} {}\n".format(file_name, strings[i].replace(' ','')))
 
 
 if __name__ == "__main__":

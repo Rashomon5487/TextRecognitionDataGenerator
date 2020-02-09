@@ -50,6 +50,9 @@ class FakeTextDataGenerator(object):
     ):
         image = None
 
+        #print('alignment:',alignment)
+        # print('size:',size)
+
         margin_top, margin_left, margin_bottom, margin_right = margins
         horizontal_margin = margin_left + margin_right
         vertical_margin = margin_top + margin_bottom
@@ -72,16 +75,18 @@ class FakeTextDataGenerator(object):
                 character_spacing,
                 fit,
             )
+        #print('txt image size:',image.size[0],image.size[1])
+        
         random_angle = rnd.randint(0 - skewing_angle, skewing_angle)
 
         rotated_img = image.rotate(
-            skewing_angle if not random_skew else random_angle, expand=1
+            skewing_angle if not random_skew else random_angle, expand=0
         )
 
         rotated_mask = mask.rotate(
             skewing_angle if not random_skew else random_angle, expand=1
         )
-
+        
         #############################
         # Apply distorsion to image #
         #############################
@@ -146,6 +151,8 @@ class FakeTextDataGenerator(object):
         #############################
         # Generate background image #
         #############################
+        #print('background_height = {},background_width = {}'.format(background_height,background_width))
+        
         if background_type == 0:
             background_img = background_generator.gaussian_noise(
                 background_height, background_width
@@ -164,9 +171,17 @@ class FakeTextDataGenerator(object):
             )
         background_mask = Image.new("RGB", (background_width, background_height), (0, 0, 0))
 
+        #print('bg_mask mode:',background_mask.mode)
+        #print('bg_img mode:',background_img.mode)
+
         #############################
         # Place text with alignment #
         #############################
+
+        background_img.convert("RGB").save("bg.jpg")
+        background_mask.convert("RGB").save("bg_mask.jpg")
+        resized_img.convert("RGB").save("txt.jpg")
+        resized_mask.convert("RGB").save("txt_mask.jpg")
 
         new_text_width, _ = resized_img.size
 
@@ -179,6 +194,10 @@ class FakeTextDataGenerator(object):
                 (int(background_width / 2 - new_text_width / 2), margin_top),
                 resized_img,
             )
+            # background_img.paste(
+            #     resized_img,
+            #     (int(background_width / 2 - new_text_width / 2), margin_top),
+            # )
             background_mask.paste(
                 resized_mask,
                 (int(background_width / 2 - new_text_width / 2), margin_top),
